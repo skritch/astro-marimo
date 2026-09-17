@@ -15,13 +15,13 @@ def _():
 
     from lib import utils
 
-    return (mo,)
+    return mo, utils
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # Some Markdown
+    # My Notebook 
 
     This is a Marimo notebook rendered as a static Astro page.
     """)
@@ -30,7 +30,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    name = mo.ui.text(placeholder="Your name here")
+    name = mo.ui.text(value="Astro", placeholder="Your name here")
     mo.md(
       f"""
       Hi! What's your name?
@@ -46,6 +46,15 @@ def _(mo, name):
     mo.md(f"""
     Hello, {name.value}!
     """)
+    return
+
+
+@app.cell
+def _(name, utils):
+    transformed = utils.test_function(name.value)
+
+    transformed
+
     return
 
 

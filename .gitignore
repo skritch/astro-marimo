@@ -1,10 +1,7 @@
-# build output
-example/dist/
-# generated types
-example/.astro/
+**/dist/
+**/.astro/
+**/node_modules/
 
-# dependencies
-example/node_modules/
 
 # logs
 npm-debug.log*
@@ -20,18 +17,17 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-# jetbrains setting folder
 .idea/
-
-# astro-marimo generated output
-example/.astro-marimo/
-example/public/_notebooks/
+.vscode/
 
 # python
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-example/.venv/
-example/venv/
+**/.venv/
+**/venv/
 
+# AI
+CLAUDE.md
+AGENTS.md

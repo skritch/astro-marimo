@@ -35,6 +35,7 @@ Matrix of features feasibility:
 | Define astro frontmatter in notebook | ✔️ | | | |
 | Per-notebook layout | ✔️ | | | |
 | Inline deps | | | | |
+| Strip code, watermark, banner | ✔️ | | | |
 | Override Marimo CSS sanely | | | | |
 
 
@@ -42,9 +43,8 @@ TODO:
 - don't rerun the whole hook all python files when any change; instead use a vite plugin?
 - support per-notebook venvs https://docs.marimo.io/guides/editor_features/home/#using-custom-virtual-environments
   - `/// script`-declared dependencies...
-- .astro-mariom fake pages are... weird. `inject-routes` requires an actual page?
-- [ ] Remove the Marimo "run or edit" header?
-- [ ] Remove "show code"
+- [x] Remove the Marimo "run or edit" header and watermark?
+- [x] Remove "show code" / toggle including code at all
 
 Notes:
 - had to add a PYTHONPATH to `pyproject.toml` to find `lib` in pyproject.
@@ -55,6 +55,9 @@ Questions:
 - what if anything will marimo-mdx have to do with this?
 - should we support setting the Python env as an option?
 - anything special for JS support?
+- Should we [pre-render HTML exports](https://docs.marimo.io/guides/exporting/static_html/#pre-render-html-exports) rather than the default, which imports Marimo libraries within the static page?
+- Think about sandboxing the marimo exports
+- .astro-marimo fake pages are... weird. `inject-routes` requires an actual page?
 
 
 ----

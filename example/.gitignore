@@ -27,6 +27,9 @@ pnpm-debug.log*
 .astro-marimo/
 public/_notebooks/
 
+# Marimo stuff
+**/__marimo__/
+
 # python
 __pycache__/
 *.py[cod]
