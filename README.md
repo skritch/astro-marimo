@@ -81,15 +81,15 @@ To fix these, the plugin should be implemented as a Vite transform, akin to the 
 
 References:
 
-https://marimo.io/blog/marimo-anywhere
-
-Best reference is probably the [mdx](https://github.com/withastro/astro/tree/main/packages/integrations/mdx/) plugin.
-
-Integrations API reference here: https://docs.astro.build/en/reference/integrations-reference/
-
-Installation notes: https://docs.astro.build/en/guides/integrations-guide/
-
-Possibly of use: https://www.eduardo.wtf/blog/rendering-jupyter-notebooks-in-a-statically-generated-site/
-
 https://docs.marimo.io/guides/exporting/webassembly_html/?
 - includes islands export.
+
+
+Integrations reference:
+-  https://docs.astro.build/en/reference/integrations-reference/
+- https://docs.astro.build/en/guides/integrations-guide/
+
+Plugin references:
+- https://github.com/shishkin/astro-asciidoc/blob/renovate/major-astro/packages/astro-asciidoc/src/index.ts
+- https://github.com/withastro/astro/tree/main/packages/integrations/mdx/
+- Vite in particule: https://github.com/withastro/astro/blob/main/packages/integrations/mdx/src/vite-plugin-mdx.ts

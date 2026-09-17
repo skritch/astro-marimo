@@ -1,6 +1,7 @@
 # /// astro
 # title: Word Count
 # description: Count word frequencies in any text using Python's standard library.
+# layout: "../layouts/NotebookLayout.astro"
 # ///
 
 import marimo
