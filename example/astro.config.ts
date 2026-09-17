@@ -99,10 +99,3 @@ export default defineConfig({
   integrations: [marimoIntegration()],
 });
 
-
-// additional stuff
-// - why do these pages initially show the text "astro-marimo"?
-// - can we remove the Marimo "run or edit" header?
-// - modify notebook layout to wrap the notebook itself in something interesting
-// - could remove the "show code", and even could remove the code from the page
-//   - again this has me thinking of "islands"
