@@ -45,6 +45,8 @@ TODOs:
   - `/// script`-declared dependencies...
 - [x] Remove the Marimo "run or edit" header and watermark?
 - [x] Remove "show code" / toggle including code at all
+- Figure out how to make frontmatter parseable within Astro... `import.meta.glob`?
+- add .url to generated frontmatter
 
 Notes:
 - had to add a PYTHONPATH to `pyproject.toml` to find `lib` in pyproject.
@@ -53,11 +55,25 @@ Notes:
 
 Questions:
 - what if anything will marimo-mdx have to do with this?
-- should we support setting the Python env as an option?
-- anything special for JS support?
+- how to support setting the Python env, or specifying Python deps within a notebook?
 - Should we [pre-render HTML exports](https://docs.marimo.io/guides/exporting/static_html/#pre-render-html-exports) rather than the default, which imports Marimo libraries within the static page?
 - Think about sandboxing the marimo exports
 - .astro-marimo fake pages are... weird. `inject-routes` requires an actual page?
+
+
+----
+
+The present version of this project is a PoC, and simply runs once over all notebooks
+at `npm run build` time. This has at least three major inadequacies:
+- no way to hot-reload individual notebooks
+- no way `import.meta.glob()` notebooks with their parsed frontmatter, e.g. to generate a list of links to notebook files, like the `mdx` plugin does
+- we create awkward temporary files in a `.astro-marimo` directory and in `public/_notebooks`
+
+To fix these, the plugin should be implemented as a Vite transform, akin to the `mdx` plugin, which would:
+- `transform` our  `.py` Marimo notebooks into JS structured data at import time (fixing `import.meta.glob`)
+- register a Vite dev server middleware via `configureServer` to produce rendered HTML notebooks on demand
+- inject rendered notebook pages via `generateBundle` during a static build
+- pass a virtual path to Astro's `injectRoute` API and generate the required file on-demand, to eliminate the need for an intermediate `.astro` file
 
 
 ----
