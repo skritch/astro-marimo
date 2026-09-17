@@ -1,9 +1,32 @@
 {
   "name": "astro-marimo",
   "version": "0.0.1",
+  "description": "Astro integration for Marimo Python notebooks — exports notebooks as static HTML during build",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./dist/index.js"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "astro-integration",
+    "astro-component",
+    "withastro",
+    "marimo",
+    "python",
+    "notebook"
+  ],
+  "homepage": "https://github.com/skritch/astro-marimo#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skritch/astro-marimo.git",
+    "directory": "packages/astro-marimo"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
@@ -13,6 +36,7 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
   }
 }

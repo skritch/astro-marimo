@@ -1,27 +1,27 @@
 
 
+# Astro-Marimo
 
-How might this work?
+This is a work-in-progress [Astro](https://astro.build/) integration to support [Marimo](https://marimo.io/) Python notebooks.
 
+See [example/](./example/), which exports notebooks as static HTML iframes during Astro's build step.
+
+---
 
 Design goals:
-1. required: notebook *outputs* are rendered within an Astro layout.
-2. desired: we can use the whole WASM-Python runs-in-your-browser thing.
-3. desired: both?
-4. desired: the ability to embed a rendered or running notebook inside another Astro page, as a component or something
-5. in any case we need support for a pyproject.yaml and local Python libraries, perhaps in a lib folder
-  - in case 1, libs and imports are required at build time
-  - in case 2, they need to be made available to the Python process in the browser, and are not installed live in the browser.
-6. another idea: reference specific marimo cells as embeddable islands
+- [x] notebooks can render within an Astro layout as static HTML files, including their outputs.
+- [ ] notebooks can run within an Astro layout with live Python
+- [ ] embed a rendered or running notebook inside another Astro page as components?
+- [ ] reference specific marimo cells as embeddable islands?
 
 
 Basic interface:
 - Marimo notebook `.py` files go directly in the `/pages/` of the Astro project
-- pyproject.toml goes straight in the root
+- `pyproject.toml` goes straight in the root
 - plug-and-play; notebooks render at routes on the server, optionally wrapped in a global or notebook-specific Astro Layout.
 
 
-Matrix of features feasibility:
+Matrix of features:
 
 | Features | Static HTML | HTML Islands | Python-WASM | Python-WASM Islands |
 | -------- | -------- | -------- | -------- | -------- |
@@ -39,7 +39,7 @@ Matrix of features feasibility:
 | Override Marimo CSS sanely | | | | |
 
 
-TODO:
+TODOs:
 - don't rerun the whole hook all python files when any change; instead use a vite plugin?
 - support per-notebook venvs https://docs.marimo.io/guides/editor_features/home/#using-custom-virtual-environments
   - `/// script`-declared dependencies...
