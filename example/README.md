@@ -1,6 +1,6 @@
 
 
-# Astro-marimo Example Project
+# Astro-Marimo Example Project
 
 This directory contains an Astro project which will export a test notebook [src/pages/test_notebook.py](./src/pages/test_notebook.py) as a static HTML page at build time.
 
