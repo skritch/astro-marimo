@@ -1,3 +1,8 @@
+# /// astro
+# title: Test Notebook
+# description: A demonstration of astro-marimo frontmatter.
+# ///
+
 import marimo
 
 __generated_with = "0.24.2"
@@ -18,7 +23,7 @@ def _(mo):
     mo.md(r"""
     # Some Markdown
 
-    Testy test test.
+    This is a Marimo notebook rendered as a static Astro page.
     """)
     return
 
@@ -41,6 +46,19 @@ def _(mo, name):
     mo.md(f"""
     Hello, {name.value}!
     """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    TODO: test a CLI arg.
+    """)
+    return
+
+
+@app.cell
+def _():
     return
 
 

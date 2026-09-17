@@ -20,12 +20,12 @@
     },
     {
       "id": "MJUe",
-      "code_hash": "5d66c87a66d94e16637f46f01bc8eb71",
+      "code_hash": "fb5931fbf66cc5e68e269ebc29b3c9e3",
       "outputs": [
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"some-markdown\">Some Markdown</h1>\n<span class=\"paragraph\">Testy test test.</span></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"some-markdown\">Some Markdown</h1>\n<span class=\"paragraph\">This is a Marimo notebook rendered as a static Astro page.</span></span>"
           }
         }
       ],
@@ -38,7 +38,7 @@
         {
           "type": "data",
           "data": {
-            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Hi! What's your name?</span>\n<span class=\"paragraph\"><marimo-ui-element object-id='vblA-0' random-id='a0ca4c36-f280-fc43-d8f1-49f573b8c9fd'><marimo-text data-initial-value='&quot;&quot;' data-label='null' data-placeholder='&quot;Your name here&quot;' data-kind='&quot;text&quot;' data-full-width='false' data-disabled='false' data-debounce='true'></marimo-text></marimo-ui-element></span></span>"
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Hi! What's your name?</span>\n<span class=\"paragraph\"><marimo-ui-element object-id='vblA-0' random-id='c65f5096-e9e4-be8a-aad6-be1bcfd43a78'><marimo-text data-initial-value='&quot;&quot;' data-label='null' data-placeholder='&quot;Your name here&quot;' data-kind='&quot;text&quot;' data-full-width='false' data-disabled='false' data-debounce='true'></marimo-text></marimo-ui-element></span></span>"
           }
         }
       ],
@@ -52,6 +52,32 @@
           "type": "data",
           "data": {
             "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Hello, !</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "f95628872f5da9d9ff62c4aae29f64b4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">TODO: test a CLI arg.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": null,
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
           }
         }
       ],

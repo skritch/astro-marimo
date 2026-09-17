@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import type { AstroIntegration } from 'astro';
 import { execSync } from 'node:child_process';
+import jsYaml from 'js-yaml';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,6 +20,16 @@ function findPyFiles(dir: string, results: string[] = []): string[] {
   return results;
 }
 
+type Frontmatter = Record<string, unknown>;
+
+function extractFrontmatter(notebook: string): Frontmatter {
+  const content = fs.readFileSync(notebook, 'utf-8');
+  const m = content.match(/^# \/\/\/ astro\s*\n([\s\S]*?)^# \/\/\//m);
+  if (!m) return {};
+  const yaml = m[1].replace(/^# ?/gm, '');
+  return (jsYaml.load(yaml) as Frontmatter) ?? {};
+}
+
 interface MarimoOptions {
   layout?: string;
 }
@@ -30,8 +41,7 @@ function marimoIntegration({ layout }: MarimoOptions = {}): AstroIntegration {
       'astro:config:setup': async ({ injectRoute, addWatchFile, command, logger }) => {
         if (command === 'preview' || command === 'sync') return;
 
-        // what is this dir for, do we really need it? can we do it in memory?
-        // or clean up after.
+        // what is this dir for, do we really need it? can we do it in memory? clean up after?
         const pagesDir = path.join(projectRoot, '.astro-marimo/pages');
         const notebooksPublicDir = path.join(projectRoot, 'public/_notebooks');
         fs.mkdirSync(pagesDir, { recursive: true });
@@ -40,7 +50,7 @@ function marimoIntegration({ layout }: MarimoOptions = {}): AstroIntegration {
         const hasPyproject = fs.existsSync(path.join(projectRoot, 'pyproject.toml'));
         const uvCmd = hasPyproject ? 'uv run' : 'uv run --with marimo';
 
-        // is it viable to skip syncing if pyproject hasn't changed?
+        // can we skip syncing if pyproject hasn't changed?
         if (hasPyproject) {
           logger.info('astro-marimo: running uv sync');
           execSync('uv sync', { cwd: projectRoot, stdio: 'inherit' });
@@ -57,10 +67,13 @@ function marimoIntegration({ layout }: MarimoOptions = {}): AstroIntegration {
 
           logger.info(`astro-marimo: exporting ${rel}`);
 
+          const env = { ...process.env, PYTHONPATH: projectRoot };
+          const frontmatter = extractFrontmatter(notebook);
+
           const html = execSync(`${uvCmd} marimo export html "${notebook}"`, {
             cwd: projectRoot,
             maxBuffer: 50 * 1024 * 1024,
-            env: { ...process.env, PYTHONPATH: projectRoot },
+            env,
           }).toString('utf-8');
 
           // Write the full standalone HTML to public/ so it's served as a static file.
@@ -69,16 +82,22 @@ function marimoIntegration({ layout }: MarimoOptions = {}): AstroIntegration {
           fs.writeFileSync(htmlPublicFile, html);
 
           const iframeSrc = `/_notebooks/${fileSlug}.html`;
-          const layoutPath = layout ?? path.join(projectRoot, 'src/layouts/NotebookLayout.astro');
+          const defaultLayout = layout ?? path.join(projectRoot, 'src/layouts/NotebookLayout.astro');
+          const frontmatterLayout = typeof frontmatter.layout === 'string'
+            ? path.resolve(path.dirname(notebook), frontmatter.layout)
+            : null;
+          const layoutPath = frontmatterLayout ?? defaultLayout;
           const pageFile = path.join(pagesDir, `${fileSlug}.astro`);
           const relLayout = path.relative(pagesDir, layoutPath);
           const relLayoutImport = relLayout.startsWith('.') ? relLayout : `./${relLayout}`;
+          const title = typeof frontmatter.title === 'string' ? frontmatter.title : slug;
 
           fs.writeFileSync(pageFile, `\
 ---
 import Layout from ${JSON.stringify(relLayoutImport)};
+const frontmatter = ${JSON.stringify(frontmatter)};
 ---
-<Layout title=${JSON.stringify(slug)}>
+<Layout title=${JSON.stringify(title)} {...frontmatter}>
   <iframe src=${JSON.stringify(iframeSrc)} />
 </Layout>
 `);

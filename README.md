@@ -27,29 +27,34 @@ Matrix of features feasibility:
 | -------- | -------- | -------- | -------- | -------- |
 | Embed in Astro Layout | ✔️ | | |
 | Import local libraries | ✔️ | |  |
-| Use as a component? | | | |
-| Use specific cells as components | | | |
-| Live-reload per-notebook | | | |
-| Bundle deps | N/A |  N/A | | |
-| Per-notebook venvs | |  | | |
-| Include astro frontmatter | | | | |
-| Use notebook title/metadata/? in layout | | | | |
-| JS or TS | | | | |
+| As a component | | | |
+| Specific cells as components | | | |
+| Per-notebook live-reload | | | |
+| Per-notebook venvs? | | | | |
+| Bundle python deps | N/A |  N/A | | |
+| Define astro frontmatter in notebook | ✔️ | | | |
+| Per-notebook layout | ✔️ | | | |
+| Inline deps | | | | |
+| Override Marimo CSS sanely | | | | |
 
 
 TODO:
 - don't rerun the whole hook all python files when any change; instead use a vite plugin?
 - support per-notebook venvs https://docs.marimo.io/guides/editor_features/home/#using-custom-virtual-environments
+  - `/// script`-declared dependencies...
 - .astro-mariom fake pages are... weird. `inject-routes` requires an actual page?
-- Remove the Marimo "run or edit" header?
-- Remove "show code"
+- [ ] Remove the Marimo "run or edit" header?
+- [ ] Remove "show code"
 
 Notes:
 - had to add a PYTHONPATH to `pyproject.toml` to find `lib` in pyproject.
+- `\\\ astro` script metadata
 
 
 Questions:
 - what if anything will marimo-mdx have to do with this?
+- should we support setting the Python env as an option?
+- anything special for JS support?
 
 
 ----
