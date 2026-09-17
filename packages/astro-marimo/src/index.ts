@@ -32,7 +32,7 @@ export function marimoIntegration(opts: MarimoIntegrationOptions = {}): AstroInt
           vite: {
             plugins: [
               marimoVitePlugin({
-                root: fileURLToPath(config.srcDir),
+                projectRoot,
                 options: opts
               })
             ]

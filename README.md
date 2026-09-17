@@ -29,7 +29,7 @@ Matrix of features:
 | Import local libraries | ✔️ | |  |
 | As a component | | | |
 | Specific cells as components | | | |
-| Per-notebook live-reload | | | |
+| Per-notebook live-reload | ✔️ | | |
 | Per-notebook venvs? | | | | |
 | Bundle python deps | N/A |  N/A | | |
 | Define astro frontmatter in notebook | ✔️ | | | |
@@ -40,25 +40,17 @@ Matrix of features:
 
 
 TODOs:
-- don't rerun the whole hook all python files when any change; instead use a vite plugin?
 - support per-notebook venvs https://docs.marimo.io/guides/editor_features/home/#using-custom-virtual-environments
-  - `/// script`-declared dependencies...
-- [x] Remove the Marimo "run or edit" header and watermark?
-- [x] Remove "show code" / toggle including code at all
+  - and `/// script`-declared dependencies?
 - Figure out how to make frontmatter parseable within Astro... `import.meta.glob`?
 - add .url to generated frontmatter
 
-Notes:
-- had to add a PYTHONPATH to `pyproject.toml` to find `lib` in pyproject.
-- `\\\ astro` script metadata
 
 
 Questions:
-- what if anything will marimo-mdx have to do with this?
 - how to support setting the Python env, or specifying Python deps within a notebook?
 - Should we [pre-render HTML exports](https://docs.marimo.io/guides/exporting/static_html/#pre-render-html-exports) rather than the default, which imports Marimo libraries within the static page?
 - Think about sandboxing the marimo exports
-- .astro-marimo fake pages are... weird. `inject-routes` requires an actual page?
 
 
 ----

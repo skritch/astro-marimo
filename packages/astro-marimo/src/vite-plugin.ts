@@ -1,7 +1,7 @@
-import type { Plugin, ViteDevServer } from 'vite';
+import type { Plugin } from 'vite';
 import jsYaml from 'js-yaml';
 import path from 'node:path';
-import { exportNotebook, stripElements } from './py.js';
+import { exportNotebook, stripElements } from './mo.js';
 import { MarimoIntegrationOptions } from './index.js';
 
 type Frontmatter = Record<string, unknown>;
@@ -14,67 +14,60 @@ function extractFrontmatter(code: string): Frontmatter {
 }
 
 export interface MarimoVitePluginOptions {
-  root: string;
+  projectRoot: string;
   options: MarimoIntegrationOptions
 }
 
-export function marimoVitePlugin({ root, options }: MarimoVitePluginOptions): Plugin {
-
+export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptions): Plugin {
   return {
     name: 'vite-plugin-marimo',
-
 
     transform(code: string, id: string) {
       if (!id.endsWith('.py')) return;
 
-      const notebookPath = path.relative(path.join(root, "pages"), id);
-      const slug = notebookPath.replace(/\\/g, '/').replace(/\.py$/, '');
-      const fileSlug = slug.replace(/\//g, '--');
-
       const frontmatter = extractFrontmatter(code);
 
-      let layoutPath
+      let layoutPath: string | undefined;
       if (typeof frontmatter.layout === 'string') {
-        layoutPath = path.resolve(path.dirname(id), frontmatter.layout)
-      } else if (options.layout && path.isAbsolute(options.layout)) {
-        layoutPath = path.join(root, options.layout)
-      } else {
-        layoutPath = undefined
+        layoutPath = path.resolve(path.dirname(id), frontmatter.layout);
+      } else if (options.layout) {
+        layoutPath = path.resolve(projectRoot, options.layout);
       }
-      const includeCode = (typeof frontmatter.includeCode == 'boolean' ? frontmatter.includeCode as boolean : options.includeCode) || false
+
+      const includeCode = (typeof frontmatter.includeCode === 'boolean' ? frontmatter.includeCode : options.includeCode) || false;
 
       const notebookHtml = stripElements(
-        exportNotebook("uv run", id, root, includeCode),
-        options.stripStaticBanner || true,
-        options.stripMarimoWatermark || true,
+        exportNotebook('uv run', id, projectRoot, includeCode),
+        options.stripStaticBanner ?? true,
+        options.stripMarimoWatermark ?? true,
       );
 
-      // temp ignore layouts
-      // if (!layoutPath) {
-      return {
-        code: `export const frontmatter = ${JSON.stringify(frontmatter)};
+
+      if (!layoutPath) {
+        return {
+          code: `export const frontmatter = ${JSON.stringify(frontmatter)};
 export async function MarimoNotebook() {}
 MarimoNotebook.__html = ${JSON.stringify(notebookHtml)};
 export default MarimoNotebook;`,
-        map: null,
-      };
-      // }
-
-      //       const relLayout = path.relative(path.dirname(id), layoutPath);
-      //       const layoutImport = relLayout.startsWith('.') ? relLayout : `./${relLayout}`;
-
-      //       return {
-      //         code: `import { Fragment, jsx as h } from "astro/jsx-runtime";
-      // import Layout from ${JSON.stringify(layoutImport)};
-      // export const frontmatter = ${JSON.stringify(frontmatter)};
-      // export async function Content() {
-      //   const content = h(Fragment, { "set:html": ${JSON.stringify(iframeHtml)} });
-      //   return h(Layout, { ...frontmatter, children: content });
-      // }
-      // export default Content;`,
-      //         meta: { vite: { lang: 'ts' } },
-      //         map: null,
-      //       };
+          map: null,
+        };
+      } else {
+        // When using a layout, iFrame the notebook HTML so it doesn't fill the page.
+        // In the future we might like to write notebook HTML at a separate route
+        // and just src= it, perhaps if we switch to inlining Marimo's own JS.
+        const srcdoc = notebookHtml.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        const iframeHtml = `<iframe srcdoc="${srcdoc}" style="width:100%;height:100%;border:none;display:block;"></iframe>`;
+        return {
+          code: `import Layout from ${JSON.stringify(layoutPath)};
+export const frontmatter = ${JSON.stringify(frontmatter)};
+export async function MarimoNotebook() {}
+MarimoNotebook.__html = ${JSON.stringify(iframeHtml)};
+MarimoNotebook.__layout = Layout;
+MarimoNotebook.__frontmatter = ${JSON.stringify(frontmatter)};
+export default MarimoNotebook;`,
+          map: null,
+        };
+      }
     },
   };
 }
