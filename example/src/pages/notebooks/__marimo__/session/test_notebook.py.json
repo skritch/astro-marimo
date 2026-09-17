@@ -7,8 +7,15 @@
   "cells": [
     {
       "id": "Hbol",
-      "code_hash": "1d0db38904205bec4d6f6f6a1f6cec3e",
-      "outputs": [],
+      "code_hash": "56aad845a31c2e6a2008e6313623bc88",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
       "console": []
     },
     {
@@ -27,13 +34,27 @@
     {
       "id": "vblA",
       "code_hash": "54cd90127f3a777f7dd14d4a0c1d331e",
-      "outputs": [],
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Hi! What's your name?</span>\n<span class=\"paragraph\"><marimo-ui-element object-id='vblA-0' random-id='a0ca4c36-f280-fc43-d8f1-49f573b8c9fd'><marimo-text data-initial-value='&quot;&quot;' data-label='null' data-placeholder='&quot;Your name here&quot;' data-kind='&quot;text&quot;' data-full-width='false' data-disabled='false' data-debounce='true'></marimo-text></marimo-ui-element></span></span>"
+          }
+        }
+      ],
       "console": []
     },
     {
       "id": "bkHC",
-      "code_hash": "3465bc35fbbf6c97df228651a9fd3618",
-      "outputs": [],
+      "code_hash": "250bf520ba58a9c940f81e8230718147",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\">Hello, !</span></span>"
+          }
+        }
+      ],
       "console": []
     }
   ]

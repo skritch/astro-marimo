@@ -12,10 +12,17 @@ Design goals:
 5. in either case we need support for a pyproject.yaml and local Python libraries, perhaps in a lib folder
   - in case 1, libs and imports are required at build time
   - in case 2, they need to be made available to the Python process in the browser, and are not installed live in the browser.
+6. another idea: reference specific marimo cells as embeddable islands
 
 
 
+TODO:
+- don't rerun the whole hook all python files when any change; instead use a vite plugin?
+- support per-notebook venvs https://docs.marimo.io/guides/editor_features/home/#using-custom-virtual-environments
+- .astro-mariom fake pages are... weird. `inject-routes` requires an actual page?
 
+Notes:
+- had to add a PYTHONPATH to find lib in pyproject.
 
 
 What's the interface?

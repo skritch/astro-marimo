@@ -8,6 +8,8 @@ app = marimo.App(width="medium")
 def _():
     import marimo as mo
 
+    from lib import utils
+
     return (mo,)
 
 
@@ -36,11 +38,9 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo, name):
-    mo.md(
-      f"""
-      Hello, {name.value}!
-      """
-    )
+    mo.md(f"""
+    Hello, {name.value}!
+    """)
     return
 
 

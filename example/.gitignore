@@ -23,6 +23,10 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# astro-marimo generated output
+.astro-marimo/
+public/_notebooks/
+
 # python
 __pycache__/
 *.py[cod]
