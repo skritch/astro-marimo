@@ -23,10 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# astro-marimo generated output
-.astro-marimo/
-public/_notebooks/
-
 # Marimo stuff
 **/__marimo__/
 

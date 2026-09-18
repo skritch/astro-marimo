@@ -1,27 +1,14 @@
 ---
-// TODO: with a Vite plugin, this becomes:
-//   const notebooks = import.meta.glob('./*.py', { eager: true })
-//   and each module has a `frontmatter` export — no manual parsing needed.
-const rawFiles = import.meta.glob<string>('./*.py', { query: '?raw', import: 'default', eager: true });
-
-function parseFrontmatter(source: string): Record<string, string> {
-  const match = source.match(/^# \/\/\/ astro\s*\n([\s\S]*?)^# \/\/\//m);
-  if (!match) return {};
-  return Object.fromEntries(
-    match[1]
-      .replace(/^# ?/gm, '')
-      .trim()
-      .split('\n')
-      .flatMap(line => {
-        const i = line.indexOf(':');
-        return i > 0 ? [[line.slice(0, i).trim(), line.slice(i + 1).trim()]] : [];
-      })
-  );
-}
-
-const notebooks = Object.entries(rawFiles).map(([filePath, source]) => {
-  const slug = filePath.replace(/^\.\//, '/').replace(/\.py$/, '');
-  return { slug, ...parseFrontmatter(source) };
+type FrontMatter = {
+  title: string;
+  description?: string;
+};
+const notebooks: Record<
+  string,
+  { frontmatter: FrontMatter; url: string; slug: string }
+> = import.meta.glob("./*.py", {
+  eager: true,
+  query: { pythonMetaOnly: true },
 });
 ---
 
@@ -34,22 +21,44 @@ const notebooks = Object.entries(rawFiles).map(([filePath, source]) => {
     <meta name="generator" content={Astro.generator} />
     <title>Astro + Marimo</title>
     <style>
-      body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
-      h1 { margin-bottom: 1rem; }
-      ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
-      a { font-weight: 600; }
-      .description { color: #6b7280; font-size: 0.875rem; }
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 640px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      h1 {
+        margin-bottom: 1rem;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      a {
+        font-weight: 600;
+      }
+      .description {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
     </style>
   </head>
   <body>
     <h1>Notebooks</h1>
     <ul>
-      {notebooks.map(({ slug, title, description }) => (
-        <li>
-          <a href={slug}>{title ?? slug}</a>
-          {description && <span class="description"> — {description}</span>}
-        </li>
-      ))}
+      {
+        Object.values(notebooks).map(({ frontmatter, url, slug }) => (
+          <li>
+            <a href={url}>{frontmatter.title ?? slug}</a>
+            {frontmatter.description && (
+              <span class="description"> — {frontmatter.description}</span>
+            )}
+          </li>
+        ))
+      }
     </ul>
   </body>
 </html>
