@@ -24,6 +24,21 @@ export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptio
   return {
     name: 'vite-plugin-marimo',
 
+    config() {
+      return {
+        server: {
+          watch: {
+            ignored: [
+              '**/.venv/**',
+              '**/venv/**',
+              '**/__pycache__/**',
+              '**/*.pyc',
+              '**/*.pyo',
+            ],
+          },
+        },
+      };
+    },
 
     transform(code: string, id: string) {
       const [filePath, queryString] = id.split('?');
