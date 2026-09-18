@@ -1,6 +1,6 @@
 import type { NamedSSRLoadedRendererValue } from 'astro';
 import { Fragment, jsx } from 'astro/jsx-runtime';
-import { chunkToString, renderStreaming } from 'astro/runtime/server/index.js';
+import { renderJSX } from 'astro/runtime/server/index.js';
 
 export async function check(Component: any): Promise<boolean> {
   return typeof Component === 'function' && Component.name === 'MarimoNotebook';
@@ -18,16 +18,8 @@ export async function renderToStaticMarkup(
   const { result } = this;
   const content = jsx(Fragment, { 'set:html': Component.__html });
   const vnode = jsx(Component.__layout, { ...Component.__frontmatter, children: content });
-
-  let html = '';
-  const destination = {
-    write(chunk: any) {
-      if (chunk instanceof Response) return;
-      html += chunkToString(result, chunk);
-    },
-  };
-  await renderStreaming(vnode, result, destination);
-  return { html };
+  const html = await renderJSX(result, vnode);
+  return { html: String(html) };
 }
 
 const renderer: NamedSSRLoadedRendererValue = {
