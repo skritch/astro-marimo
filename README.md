@@ -53,20 +53,6 @@ Questions:
 - Think about sandboxing the marimo exports
 
 
-----
-
-The present version of this project is a PoC, and simply runs once over all notebooks
-at `npm run build` time. This has at least three major inadequacies:
-- no way to hot-reload individual notebooks
-- no way `import.meta.glob()` notebooks with their parsed frontmatter, e.g. to generate a list of links to notebook files, like the `mdx` plugin does
-- we create awkward temporary files in a `.astro-marimo` directory and in `public/_notebooks`
-
-To fix these, the plugin should be implemented as a Vite transform, akin to the `mdx` plugin, which would:
-- `transform` our  `.py` Marimo notebooks into JS structured data at import time (fixing `import.meta.glob`)
-- register a Vite dev server middleware via `configureServer` to produce rendered HTML notebooks on demand
-- inject rendered notebook pages via `generateBundle` during a static build
-- pass a virtual path to Astro's `injectRoute` API and generate the required file on-demand, to eliminate the need for an intermediate `.astro` file
-
 
 ----
 
