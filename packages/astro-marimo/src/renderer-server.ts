@@ -17,7 +17,12 @@ export async function renderToStaticMarkup(
 
   const { result } = this;
   const content = jsx(Fragment, { 'set:html': Component.__html });
-  const vnode = jsx(Component.__layout, { ...Component.__frontmatter, children: content });
+  const vnode = jsx(Component.__layout, {
+    frontmatter: Component.__frontmatter,
+    url: Component.url,
+    slug: Component.slug,
+    children: content
+  });
   const html = await renderJSX(result, vnode);
   return { html: String(html) };
 }

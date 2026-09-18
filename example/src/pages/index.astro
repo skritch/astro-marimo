@@ -3,13 +3,13 @@ type FrontMatter = {
   title: string;
   description?: string;
 };
-const notebooks: Record<
-  string,
-  { frontmatter: FrontMatter; url: string; slug: string }
-> = import.meta.glob("./*.py", {
-  eager: true,
-  query: { pythonMetaOnly: true },
-});
+const notebooks: { frontmatter: FrontMatter; url: string; slug: string }[] =
+  Object.values(
+    import.meta.glob("./*.py", {
+      eager: true,
+      query: { pythonMetaOnly: true },
+    }),
+  );
 ---
 
 <html lang="en">

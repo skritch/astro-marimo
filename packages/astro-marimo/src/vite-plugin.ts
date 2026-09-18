@@ -61,9 +61,11 @@ export const frontmatter = ${JSON.stringify(frontmatter)};`,
       );
 
 
-      const sharedExports = `export const slug = ${JSON.stringify(slug)};
+      const sharedExports = `
+export const slug = ${JSON.stringify(slug)};
 export const url = ${JSON.stringify(url)};
-export const frontmatter = ${JSON.stringify(frontmatter)};`;
+export const frontmatter = ${JSON.stringify(frontmatter)};
+`;
 
       if (!layoutPath) {
         return {

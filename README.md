@@ -44,6 +44,7 @@ TODOs:
   - and `/// script`-declared dependencies?
 - Figure out how to make frontmatter parseable within Astro... `import.meta.glob`?
 - add .url to generated frontmatter
+- suppress Marimo healthcheck 404s
 
 
 

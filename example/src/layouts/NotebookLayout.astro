@@ -1,32 +1,66 @@
 ---
 interface Props {
-  title?: string;
-  description?: string;
-  [key: string]: unknown;
+  frontmatter?: {
+    title?: string;
+    description?: string;
+  };
+  url: string;
+  slug: string;
 }
-const { title = 'Notebook', description } = Astro.props;
+const props = Astro.props;
+const frontmatter = props.frontmatter || {};
 ---
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
+    <title>{frontmatter.title || props.slug}</title>
     <style>
-      * { margin: 0; box-sizing: border-box; }
-      html, body { height: 100%; }
-      body { display: flex; flex-direction: column; }
-      header { padding: 0.75rem 1.5rem; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; text-align: center; }
-      h1 { font-size: 1.25rem; font-weight: 600; }
-      p { font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem; }
-      main { flex: 1; overflow: hidden; }
-      main :global(iframe) { width: 100%; height: 100%; border: none; display: block; }
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        flex-shrink: 0;
+        text-align: center;
+      }
+      h1 {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      p {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+      }
+      main {
+        flex: 1;
+        overflow: hidden;
+      }
+      main :global(iframe) {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+      }
     </style>
   </head>
   <body>
     <header>
-      <h1>{title}</h1>
-      {description && <p>{description}</p>}
+      <h1>{frontmatter.title || props.slug}</h1>
+      {frontmatter.description && <p>{frontmatter.description}</p>}
     </header>
     <main>
       <slot />
