@@ -37,6 +37,7 @@ Matrix of features:
 | Inline deps | | | | |
 | Strip code, watermark, banner | ✔️ | | | |
 | Override Marimo CSS sanely | | | | |
+| Support content collections | | | | |
 
 
 TODOs:

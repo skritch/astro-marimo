@@ -3,6 +3,6 @@ import { marimoIntegration } from 'astro-marimo';
 
 export default defineConfig({
   integrations: [marimoIntegration({
-    layout: 'src/layouts/NotebookLayout.astro'
+    layout: 'src/layouts/NotebookLayout.astro',
   })],
 });

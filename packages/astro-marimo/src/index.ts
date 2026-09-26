@@ -13,6 +13,14 @@ export interface MarimoIntegrationOptions {
   includeCode?: boolean;
   stripStaticBanner?: boolean;
   stripMarimoWatermark?: boolean;
+  /** CSS string injected into the notebook's <head>, after Marimo's own styles. */
+  css?: string;
+}
+
+const defaults: MarimoIntegrationOptions = {
+  includeCode: false,
+  stripStaticBanner: true,
+  stripMarimoWatermark: true
 }
 
 export function marimoIntegration(opts: MarimoIntegrationOptions = {}): AstroIntegration {
@@ -33,7 +41,7 @@ export function marimoIntegration(opts: MarimoIntegrationOptions = {}): AstroInt
             plugins: [
               marimoVitePlugin({
                 projectRoot,
-                options: opts
+                options: { ...defaults, ...opts }
               })
             ]
           }

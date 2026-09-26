@@ -21,3 +21,7 @@ export function stripElements(html: string, stripStaticBanner: boolean, stripMar
   const style = `<style>${selectors.join(', ')} { display: none !important; }</style>`;
   return html.replace('</head>', `${style}</head>`);
 }
+
+export function injectCss(html: string, css: string): string {
+  return html.replace('</head>', `<style>${css}</style></head>`);
+}

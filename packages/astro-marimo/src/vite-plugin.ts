@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite';
 import jsYaml from 'js-yaml';
 import path from 'node:path';
-import { exportNotebook, isMarimoNotebook, stripElements } from './mo.js';
+import { exportNotebook, isMarimoNotebook, stripElements, injectCss } from './mo.js';
 import { MarimoIntegrationOptions } from './index.js';
 
 type Frontmatter = Record<string, unknown>;
@@ -74,14 +74,12 @@ export const frontmatter = ${JSON.stringify(frontmatter)};`,
         layoutPath = path.resolve(projectRoot, options.layout);
       }
 
-      const includeCode = (typeof frontmatter.includeCode === 'boolean' ? frontmatter.includeCode : options.includeCode) || false;
+      const includeCode = typeof frontmatter.includeCode === 'boolean' ? frontmatter.includeCode : options.includeCode;
 
       const notebookHtml = exportCache.get(filePath) ?? (() => {
-        const html = stripElements(
-          exportNotebook('uv run', filePath, projectRoot, includeCode),
-          options.stripStaticBanner ?? true,
-          options.stripMarimoWatermark ?? true,
-        );
+        let html = exportNotebook('uv run', filePath, projectRoot, includeCode ?? false);
+        html = stripElements(html, options.stripStaticBanner ?? true, options.stripMarimoWatermark ?? true);
+        if (options.css) html = injectCss(html, options.css);
         exportCache.set(filePath, html);
         return html;
       })();
@@ -102,11 +100,8 @@ export default MarimoNotebook;`,
           map: null,
         };
       } else {
-        // When using a layout, iFrame the notebook HTML so it doesn't fill the page.
-        // In the future we might like to write notebook HTML at a separate route
-        // and just src= it, perhaps if we switch to inlining Marimo's own JS.
         const srcdoc = notebookHtml.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-        const iframeHtml = `<iframe srcdoc="${srcdoc}" style="width:100%;height:100%;border:none;display:block;"></iframe>`;
+        const iframeHtml = `<iframe srcdoc="${srcdoc}" style="width:100%;border:none;display:block;"></iframe>`;
         return {
           code: `import Layout from ${JSON.stringify(layoutPath)};
 ${sharedExports}
