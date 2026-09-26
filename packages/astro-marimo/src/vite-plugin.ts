@@ -3,6 +3,7 @@ import jsYaml from 'js-yaml';
 import path from 'node:path';
 import { exportNotebook, isMarimoNotebook, stripElements, injectCss } from './mo.js';
 import { MarimoIntegrationOptions } from './index.js';
+import { outerScript } from './iframe-scripts.js';
 
 type Frontmatter = Record<string, unknown>;
 
@@ -100,8 +101,12 @@ export default MarimoNotebook;`,
           map: null,
         };
       } else {
+        const iframeId = `marimo-${slug}`;
         const srcdoc = notebookHtml.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-        const iframeHtml = `<iframe srcdoc="${srcdoc}" style="width:100%;border:none;display:block;"></iframe>`;
+        const iframeHtml = [
+          `<iframe id="${iframeId}" srcdoc="${srcdoc}" style="width:100%;border:none;display:block;"></iframe>`,
+          `<script>${outerScript(iframeId)}</script>`,
+        ].join('\n');
         return {
           code: `import Layout from ${JSON.stringify(layoutPath)};
 ${sharedExports}
