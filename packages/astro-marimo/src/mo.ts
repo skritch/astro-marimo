@@ -9,6 +9,10 @@ export function exportNotebook(uvCmd: string, notebook: string, projectRoot: str
   }).toString('utf-8');
 }
 
+export function isMarimoNotebook(code: string): boolean {
+  return code.includes('app = marimo.App');
+}
+
 export function stripElements(html: string, stripStaticBanner: boolean, stripMarimoWatermark: boolean): string {
   const selectors: string[] = [];
   if (stripStaticBanner) selectors.push('[data-testid="static-notebook-banner"]');

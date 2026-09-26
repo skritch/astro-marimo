@@ -7,7 +7,7 @@ const notebooks: { frontmatter: FrontMatter; url: string; slug: string }[] =
   Object.values(
     import.meta.glob("./*.py", {
       eager: true,
-      query: { pythonMetaOnly: true },
+      query: { frontmatterOnly: true },
     }),
   );
 ---

@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite';
 import jsYaml from 'js-yaml';
 import path from 'node:path';
-import { exportNotebook, stripElements } from './mo.js';
+import { exportNotebook, isMarimoNotebook, stripElements } from './mo.js';
 import { MarimoIntegrationOptions } from './index.js';
 
 type Frontmatter = Record<string, unknown>;
@@ -20,6 +20,7 @@ export interface MarimoVitePluginOptions {
 
 
 export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptions): Plugin {
+  const exportCache = new Map<string, string>();
 
   return {
     name: 'vite-plugin-marimo',
@@ -40,9 +41,15 @@ export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptio
       };
     },
 
+    handleHotUpdate({ file }) {
+      exportCache.delete(file);
+    },
+
     transform(code: string, id: string) {
       const [filePath, queryString] = id.split('?');
+
       if (!filePath.endsWith('.py')) return;
+      if (!isMarimoNotebook(code)) return;
 
       const query = new URLSearchParams(queryString);
       const frontmatter = extractFrontmatter(code);
@@ -51,7 +58,7 @@ export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptio
       const url = '/' + path.relative(pagesDir, filePath).replace(/\\/g, '/').replace(/\.py$/, '');
       const slug = path.basename(filePath, '.py').toLowerCase().replace(/[_\s]+/g, '-');
 
-      if (query.has('pythonMetaOnly')) {
+      if (query.has('frontmatterOnly')) {
         return {
           code: `export const slug = ${JSON.stringify(slug)};
 export const url = ${JSON.stringify(url)};
@@ -69,11 +76,15 @@ export const frontmatter = ${JSON.stringify(frontmatter)};`,
 
       const includeCode = (typeof frontmatter.includeCode === 'boolean' ? frontmatter.includeCode : options.includeCode) || false;
 
-      const notebookHtml = stripElements(
-        exportNotebook('uv run', filePath, projectRoot, includeCode),
-        options.stripStaticBanner ?? true,
-        options.stripMarimoWatermark ?? true,
-      );
+      const notebookHtml = exportCache.get(filePath) ?? (() => {
+        const html = stripElements(
+          exportNotebook('uv run', filePath, projectRoot, includeCode),
+          options.stripStaticBanner ?? true,
+          options.stripMarimoWatermark ?? true,
+        );
+        exportCache.set(filePath, html);
+        return html;
+      })();
 
 
       const sharedExports = `

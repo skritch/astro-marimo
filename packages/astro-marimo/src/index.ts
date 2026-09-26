@@ -26,7 +26,7 @@ export function marimoIntegration(opts: MarimoIntegrationOptions = {}): AstroInt
         addPageExtension('.py');
         addRenderer({
           name: 'astro-marimo',
-          serverEntrypoint: new URL('../dist/renderer-server.js', import.meta.url),
+          serverEntrypoint: new URL('../dist/ssr.js', import.meta.url),
         });
         updateConfig({
           vite: {
