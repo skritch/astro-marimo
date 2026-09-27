@@ -1,6 +1,7 @@
 # /// astro
 # title: Fibonacci Sequence
 # description: Visualising the Fibonacci sequence with pure Python.
+# mode: wasm
 # ///
 
 import marimo

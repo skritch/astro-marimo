@@ -1,12 +1,36 @@
 import { execSync } from 'node:child_process';
-export function exportNotebook(uvCmd: string, notebook: string, projectRoot: string, includeCode: boolean): string {
-  console.log(`Exporting ${notebook}...`)
-  const codeFlag = includeCode ? '--include-code' : '--no-include-code';
-  return execSync(`${uvCmd} marimo export html ${codeFlag} "${notebook}"`, {
-    cwd: projectRoot,
-    maxBuffer: 50 * 1024 * 1024,
-    env: process.env,
-  }).toString('utf-8');
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+export interface ExportOptions {
+  includeCode: boolean;
+  execute: boolean;
+  mode: 'static' | 'wasm';
+  wasmMode: 'run' | 'edit';
+}
+
+export function exportNotebook(uvCmd: string, notebook: string, projectRoot: string, opts: ExportOptions): string {
+  console.log(`Exporting ${notebook} (${opts.mode})...`)
+
+  if (opts.mode === 'wasm') {
+    const tmpDir = mkdtempSync(join(tmpdir(), 'astro-marimo-'));
+    const outFile = join(tmpDir, 'index.html');
+    try {
+      execSync(
+        `${uvCmd} marimo export html-wasm --mode ${opts.wasmMode} --single-file ${opts.includeCode ? '--show-code' : '--no-show-code'} ${opts.execute ? '--execute' : '--no-execute'} -o "${outFile}" "${notebook}"`,
+        { cwd: projectRoot, env: process.env }
+      );
+      return readFileSync(outFile, 'utf-8');
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  }
+
+  return execSync(
+    `${uvCmd} marimo export html ${opts.includeCode ? '--include-code' : '--no-include-code'} ${opts.execute ? '--execute' : '--no-execute'} "${notebook}"`,
+    { cwd: projectRoot, maxBuffer: 50 * 1024 * 1024, env: process.env }
+  ).toString('utf-8');
 }
 
 export function isMarimoNotebook(code: string): boolean {

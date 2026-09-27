@@ -2,7 +2,7 @@ import type { Plugin } from 'vite';
 import jsYaml from 'js-yaml';
 import path from 'node:path';
 import { exportNotebook, isMarimoNotebook, stripElements, injectCss } from './mo.js';
-import { MarimoIntegrationOptions } from './index.js';
+import { type MarimoIntegrationOptions } from './options.js';
 import { outerScript } from './iframe-scripts.js';
 
 type Frontmatter = Record<string, unknown>;
@@ -55,7 +55,7 @@ export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptio
       const query = new URLSearchParams(queryString);
       const frontmatter = extractFrontmatter(code);
 
-      const mergedOptions = options = { ...frontmatter, ...options } as MarimoIntegrationOptions
+      const mergedOptions: MarimoIntegrationOptions = { ...options, ...frontmatter } as MarimoIntegrationOptions;
 
       const pagesDir = path.join(projectRoot, 'src', 'pages');
       const url = '/' + path.relative(pagesDir, filePath).replace(/\\/g, '/').replace(/\.py$/, '');
@@ -73,16 +73,20 @@ export const frontmatter = ${JSON.stringify(frontmatter)};`,
       let layoutPath: string | undefined;
       if (typeof frontmatter.layout === 'string') {
         layoutPath = path.resolve(path.dirname(filePath), frontmatter.layout);
-      } else if (options.layout) {
-        layoutPath = path.resolve(projectRoot, options.layout);
+      } else if (mergedOptions.layout) {
+        layoutPath = path.resolve(projectRoot, mergedOptions.layout);
       }
 
 
       const notebookHtml = exportCache.get(filePath) ?? (() => {
-        let html = exportNotebook(
-          'uv run', filePath, projectRoot, mergedOptions.includeCode);
-        html = stripElements(html, options.stripStaticBanner, options.stripMarimoWatermark);
-        if (options.css) html = injectCss(html, options.css);
+        let html = exportNotebook('uv run', filePath, projectRoot, {
+          includeCode: mergedOptions.includeCode,
+          execute: mergedOptions.execute,
+          mode: mergedOptions.mode,
+          wasmMode: mergedOptions.wasmMode,
+        });
+        html = stripElements(html, mergedOptions.stripStaticBanner, mergedOptions.stripMarimoWatermark);
+        if (mergedOptions.css) html = injectCss(html, mergedOptions.css);
         exportCache.set(filePath, html);
         return html;
       })();

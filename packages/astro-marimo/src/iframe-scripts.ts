@@ -8,25 +8,23 @@ function _outerScript(iframeId: string) {
     const win = iframe.contentWindow as (Window & { ResizeObserver: typeof ResizeObserver }) | null;
     if (!doc || !win) return;
 
-    const attach = (app: Element) => {
-      const setHeight = () => { if (app.scrollHeight > 0) iframe.style.height = `${app.scrollHeight}px`; };
-      new win.ResizeObserver(setHeight).observe(app);
-      setHeight();
+    let lastHeight = 0;
+
+    const setHeight = () => {
+      const h = doc.getElementById('App')?.scrollHeight ?? 0;
+      if (h > 0 && h !== lastHeight) {
+        lastHeight = h;
+        iframe.style.height = `${h}px`;
+      }
     };
 
-    // Marimo's #App has overflow:auto — its scrollHeight is the full content height
-    // even while the iframe clips the visible area to its current height.
-    const app = doc.getElementById('App');
-    if (app) {
-      attach(app);
-    } else {
-      // React renders async after load — wait for #App to appear.
-      const mo = new MutationObserver(() => {
-        const app = doc.getElementById('App');
-        if (app) { attach(app); mo.disconnect(); }
-      });
-      mo.observe(doc.body, { childList: true, subtree: true });
-    }
+    // MutationObserver handles both cases:
+    // - #App replaced entirely (WASM Marimo remounts React when Pyodide takes over)
+    // - content added inside #App (Pyodide rendering cells — scrollHeight grows but
+    //   layout height stays fixed at iframe height, so ResizeObserver never fires)
+    new MutationObserver(setHeight).observe(doc.body, { childList: true, subtree: true });
+
+    setHeight();
   });
 }
 

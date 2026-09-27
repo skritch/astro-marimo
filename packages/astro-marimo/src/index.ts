@@ -1,27 +1,15 @@
 import type { AstroIntegration } from 'astro';
 import { fileURLToPath } from 'node:url';
 import { marimoVitePlugin } from './vite-plugin.js';
+import { type MarimoIntegrationOptions, defaults } from './options.js';
+
+export type { MarimoIntegrationOptions };
 
 type InternalHookParams = Parameters<
   NonNullable<AstroIntegration["hooks"]["astro:config:setup"]>
 >[0] & {
   addPageExtension(ext: string): void;
 };
-
-export interface MarimoIntegrationOptions {
-  layout?: string;
-  includeCode: boolean;
-  stripStaticBanner: boolean;
-  stripMarimoWatermark: boolean;
-  /** CSS string injected into the notebook's <head>, after Marimo's own styles. */
-  css?: string;
-}
-
-const defaults: MarimoIntegrationOptions = {
-  includeCode: false,
-  stripStaticBanner: true,
-  stripMarimoWatermark: true
-}
 
 export function marimoIntegration(opts: Partial<MarimoIntegrationOptions> = {}): AstroIntegration {
   return {
