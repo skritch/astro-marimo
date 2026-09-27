@@ -2,8 +2,6 @@ export interface MarimoIntegrationOptions {
   layout?: string;
   /** Include Python source code in the export. Default: false */
   includeCode: boolean;
-  /** Execute notebook cells during export. Default: false */
-  execute: boolean;
   /** Hide Marimo's "static notebook" banner. Default: true */
   stripStaticBanner: boolean;
   /** Hide Marimo watermark. Default: true */
@@ -14,11 +12,13 @@ export interface MarimoIntegrationOptions {
   mode: 'static' | 'wasm';
   /** For wasm mode: 'run' (read-only) or 'edit' (full editor UI). Default: 'run' */
   wasmMode: 'run' | 'edit';
+  /** Pre-execute notebook cells during export. Requires uv 0.7.21 or greater. Default: true */
+  wasmExecute: boolean;
 }
 
 export const defaults: MarimoIntegrationOptions = {
   includeCode: false,
-  execute: false,
+  wasmExecute: true,
   stripStaticBanner: true,
   stripMarimoWatermark: true,
   mode: 'static',

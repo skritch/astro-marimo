@@ -77,11 +77,10 @@ export const frontmatter = ${JSON.stringify(frontmatter)};`,
         layoutPath = path.resolve(projectRoot, mergedOptions.layout);
       }
 
-
       const notebookHtml = exportCache.get(filePath) ?? (() => {
-        let html = exportNotebook('uv run', filePath, projectRoot, {
+        let html = exportNotebook(filePath, projectRoot, {
           includeCode: mergedOptions.includeCode,
-          execute: mergedOptions.execute,
+          wasmExecute: mergedOptions.wasmExecute,
           mode: mergedOptions.mode,
           wasmMode: mergedOptions.wasmMode,
         });
@@ -90,7 +89,6 @@ export const frontmatter = ${JSON.stringify(frontmatter)};`,
         exportCache.set(filePath, html);
         return html;
       })();
-
 
       const sharedExports = `
 export const slug = ${JSON.stringify(slug)};

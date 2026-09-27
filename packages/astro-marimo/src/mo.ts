@@ -1,16 +1,26 @@
 import { execSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { delimiter, join } from 'node:path';
 
 export interface ExportOptions {
   includeCode: boolean;
-  execute: boolean;
   mode: 'static' | 'wasm';
   wasmMode: 'run' | 'edit';
+  wasmExecute: boolean;
 }
 
-export function exportNotebook(uvCmd: string, notebook: string, projectRoot: string, opts: ExportOptions): string {
+// node_modules/.bin prepends to PATH in npm/Astro environments, which can shadow
+// system tools like uv with older bundled versions (e.g. @manzt/uv from mdx-marimo).
+function cleanEnv() {
+  const PATH = (process.env.PATH ?? '')
+    .split(delimiter)
+    .filter(p => !p.includes('node_modules/.bin'))
+    .join(delimiter);
+  return { ...process.env, PATH };
+}
+
+export function exportNotebook(notebook: string, projectRoot: string, opts: ExportOptions): string {
   console.log(`Exporting ${notebook} (${opts.mode})...`)
 
   if (opts.mode === 'wasm') {
@@ -18,8 +28,8 @@ export function exportNotebook(uvCmd: string, notebook: string, projectRoot: str
     const outFile = join(tmpDir, 'index.html');
     try {
       execSync(
-        `${uvCmd} marimo export html-wasm --mode ${opts.wasmMode} --single-file ${opts.includeCode ? '--show-code' : '--no-show-code'} ${opts.execute ? '--execute' : '--no-execute'} -o "${outFile}" "${notebook}"`,
-        { cwd: projectRoot, env: process.env }
+        `uv run marimo export html-wasm --mode ${opts.wasmMode} --single-file ${opts.includeCode ? '--show-code' : '--no-show-code'} ${opts.wasmExecute ? '--execute' : '--no-execute'} -o "${outFile}" "${notebook}"`,
+        { cwd: projectRoot, env: cleanEnv() }
       );
       return readFileSync(outFile, 'utf-8');
     } finally {
@@ -28,8 +38,8 @@ export function exportNotebook(uvCmd: string, notebook: string, projectRoot: str
   }
 
   return execSync(
-    `${uvCmd} marimo export html ${opts.includeCode ? '--include-code' : '--no-include-code'} ${opts.execute ? '--execute' : '--no-execute'} "${notebook}"`,
-    { cwd: projectRoot, maxBuffer: 50 * 1024 * 1024, env: process.env }
+    `uv run marimo export html ${opts.includeCode ? '--include-code' : '--no-include-code'} "${notebook}"`,
+    { cwd: projectRoot, maxBuffer: 50 * 1024 * 1024, env: cleanEnv() }
   ).toString('utf-8');
 }
 

@@ -5,8 +5,7 @@ function _outerScript(iframeId: string) {
 
   iframe.addEventListener('load', () => {
     const doc = iframe.contentDocument;
-    const win = iframe.contentWindow as (Window & { ResizeObserver: typeof ResizeObserver }) | null;
-    if (!doc || !win) return;
+    if (!doc?.body) return;
 
     let lastHeight = 0;
 
