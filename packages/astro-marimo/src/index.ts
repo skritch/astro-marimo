@@ -10,9 +10,9 @@ type InternalHookParams = Parameters<
 
 export interface MarimoIntegrationOptions {
   layout?: string;
-  includeCode?: boolean;
-  stripStaticBanner?: boolean;
-  stripMarimoWatermark?: boolean;
+  includeCode: boolean;
+  stripStaticBanner: boolean;
+  stripMarimoWatermark: boolean;
   /** CSS string injected into the notebook's <head>, after Marimo's own styles. */
   css?: string;
 }
@@ -23,7 +23,7 @@ const defaults: MarimoIntegrationOptions = {
   stripMarimoWatermark: true
 }
 
-export function marimoIntegration(opts: MarimoIntegrationOptions = {}): AstroIntegration {
+export function marimoIntegration(opts: Partial<MarimoIntegrationOptions> = {}): AstroIntegration {
   return {
     name: 'astro-marimo',
     hooks: {

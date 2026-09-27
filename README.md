@@ -9,9 +9,9 @@ See [example/](./example/), which exports notebooks as static HTML iframes durin
 ---
 
 Design goals:
-- [x] notebooks can render within an Astro layout as static HTML files, including their outputs.
-- [ ] notebooks can run within an Astro layout with live Python
-- [ ] embed a rendered or running notebook inside another Astro page as components?
+- [x] notebooks embed in an Astro layout as static HTML files with pre-rendered cell outputs.
+- [ ] notebooks can run within an Astro layout with live interactive Python
+- [ ] embed a notebook inside another Astro page as a component, with or without Python
 - [ ] reference specific marimo cells as embeddable islands?
 
 
@@ -23,18 +23,16 @@ Basic interface:
 
 Matrix of features:
 
-| Features | Static HTML | HTML Islands | Python-WASM | Python-WASM Islands |
+| Features | Static HTML | Static Components | Python-WASM | Python-WASM Components |
 | -------- | -------- | -------- | -------- | -------- |
 | Embed in Astro Layout | ✔️ | | |
-| Import local libraries | ✔️ | |  |
-| As a component | | | |
+| Import local libraries | ✔️ | | |
 | Specific cells as components | | | |
 | Per-notebook live-reload | ✔️ | | |
-| Per-notebook venvs? | | | | |
+| Per-notebook venvs / deps | | | | |
 | Bundle python deps | N/A |  N/A | | |
 | Define astro frontmatter in notebook | ✔️ | | | |
 | Per-notebook layout | ✔️ | | | |
-| Inline deps | | | | |
 | Strip code, watermark, banner | ✔️ | | | |
 | Override Marimo CSS sanely | | | | |
 | Support content collections | | | | |
@@ -43,16 +41,13 @@ Matrix of features:
 TODOs:
 - support per-notebook venvs https://docs.marimo.io/guides/editor_features/home/#using-custom-virtual-environments
   - and `/// script`-declared dependencies?
-- Figure out how to make frontmatter parseable within Astro... `import.meta.glob`?
-- add .url to generated frontmatter
-- suppress Marimo healthcheck 404s
 
 
 
 Questions:
 - how to support setting the Python env, or specifying Python deps within a notebook?
 - Should we [pre-render HTML exports](https://docs.marimo.io/guides/exporting/static_html/#pre-render-html-exports) rather than the default, which imports Marimo libraries within the static page?
-- Think about sandboxing the marimo exports
+- Think about sandboxing the marimo exports?
 
 
 
@@ -63,7 +58,6 @@ References:
 
 https://docs.marimo.io/guides/exporting/webassembly_html/?
 - includes islands export.
-
 
 Integrations reference:
 -  https://docs.astro.build/en/reference/integrations-reference/

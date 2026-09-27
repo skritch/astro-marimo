@@ -55,6 +55,8 @@ export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptio
       const query = new URLSearchParams(queryString);
       const frontmatter = extractFrontmatter(code);
 
+      const mergedOptions = options = { ...frontmatter, ...options } as MarimoIntegrationOptions
+
       const pagesDir = path.join(projectRoot, 'src', 'pages');
       const url = '/' + path.relative(pagesDir, filePath).replace(/\\/g, '/').replace(/\.py$/, '');
       const slug = path.basename(filePath, '.py').toLowerCase().replace(/[_\s]+/g, '-');
@@ -75,11 +77,11 @@ export const frontmatter = ${JSON.stringify(frontmatter)};`,
         layoutPath = path.resolve(projectRoot, options.layout);
       }
 
-      const includeCode = typeof frontmatter.includeCode === 'boolean' ? frontmatter.includeCode : options.includeCode;
 
       const notebookHtml = exportCache.get(filePath) ?? (() => {
-        let html = exportNotebook('uv run', filePath, projectRoot, includeCode ?? false);
-        html = stripElements(html, options.stripStaticBanner ?? true, options.stripMarimoWatermark ?? true);
+        let html = exportNotebook(
+          'uv run', filePath, projectRoot, mergedOptions.includeCode);
+        html = stripElements(html, options.stripStaticBanner, options.stripMarimoWatermark);
         if (options.css) html = injectCss(html, options.css);
         exportCache.set(filePath, html);
         return html;
