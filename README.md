@@ -36,8 +36,6 @@ export interface MarimoIntegrationOptions {
   layout?: string;
   /** Include Python source code in the export. Default: false */
   includeCode: boolean;
-  /** Hide Marimo's "static notebook" banner. Default: true */
-  stripStaticBanner: boolean;
   /** Hide Marimo watermark. Default: true */
   stripMarimoWatermark: boolean;
   /** CSS injected into the notebook's <head> after Marimo's own styles. */
@@ -80,9 +78,10 @@ Matrix of features:
 | Embed in Astro Layout | ✔️ | ✔️ | |
 | Import local libraries | ✔️ | ✔️ | |
 | Specific cells as components | | | |
-| Per-notebook live-reload | ✔️ | ✔️ | |
-| Per-notebook venvs / deps | | | | |
-| Bundle python deps | N/A |  N/A | | |
+| Live-reload | ✔️ | ✔️ | |
+| Pyproject-global deps | ✔️ | | | |
+| Per-notebook deps | | ✔️ | | |
+| Bundle python deps | N/A |  | N/A  | |
 | Define astro frontmatter in notebook | ✔️ | ✔️ | | |
 | Per-notebook layout | ✔️ | ✔️ | | |
 | Strip code, watermark, banner | ✔️ | ✔️ | | |
@@ -92,6 +91,6 @@ Matrix of features:
 
 TODOs:
 - support per-notebook venvs https://docs.marimo.io/guides/editor_features/home/#using-custom-virtual-environments
-- allow `pyproject.toml` to be omitted
+- figure out if `pyproject.toml` can be omitted. 
+- Figure out how to use pyproject-global dependencies inside WASM notebooks. (The sandboxed env seems to ignore them.)
 - iframes feel pretty bad. Consider using MarimoIslandGenerator and building the HTML ourselves.
-

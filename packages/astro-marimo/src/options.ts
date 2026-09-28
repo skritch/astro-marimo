@@ -2,8 +2,6 @@ export interface MarimoIntegrationOptions {
   layout?: string;
   /** Include Python source code in the export. Default: false */
   includeCode: boolean;
-  /** Hide Marimo's "static notebook" banner. Default: true */
-  stripStaticBanner: boolean;
   /** Hide Marimo watermark. Default: true */
   stripMarimoWatermark: boolean;
   /** CSS injected into the notebook's <head> after Marimo's own styles. */
@@ -19,7 +17,6 @@ export interface MarimoIntegrationOptions {
 export const defaults: MarimoIntegrationOptions = {
   includeCode: false,
   wasmExecute: true,
-  stripStaticBanner: true,
   stripMarimoWatermark: true,
   mode: 'static',
   wasmMode: 'run',

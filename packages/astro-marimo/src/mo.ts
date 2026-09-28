@@ -47,11 +47,14 @@ export function isMarimoNotebook(code: string): boolean {
   return code.includes('app = marimo.App');
 }
 
-export function stripElements(html: string, stripStaticBanner: boolean, stripMarimoWatermark: boolean): string {
+export function stripElements(html: string, stripMarimoWatermark: boolean): string {
   // .z-10000 is Astro's minimap widget. It mis-positions relative to the iframe,
   // and cannot be easily fixed, so we just remove it.
-  const selectors: string[] = ['.z-10000'];
-  if (stripStaticBanner) selectors.push('[data-testid="static-notebook-banner"]');
+  const selectors: string[] = [
+    '.z-10000',
+    '[data-testid="notebook-actions-dropdown"]',
+    '[data-testid="static-notebook-banner"]'
+  ];
   if (stripMarimoWatermark) selectors.push('[data-testid="watermark"]');
   const style = `<style>${selectors.join(', ')} { display: none !important; }</style>`;
   return html.replace('</head>', `${style}</head>`);

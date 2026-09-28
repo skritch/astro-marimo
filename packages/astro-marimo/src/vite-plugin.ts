@@ -84,7 +84,7 @@ export const frontmatter = ${JSON.stringify(frontmatter)};`,
           mode: mergedOptions.mode,
           wasmMode: mergedOptions.wasmMode,
         });
-        html = stripElements(html, mergedOptions.stripStaticBanner, mergedOptions.stripMarimoWatermark);
+        html = stripElements(html, mergedOptions.stripMarimoWatermark);
         if (mergedOptions.css) html = injectCss(html, mergedOptions.css);
         exportCache.set(filePath, html);
         return html;
