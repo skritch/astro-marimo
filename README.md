@@ -94,3 +94,5 @@ TODOs:
 - figure out if `pyproject.toml` can be omitted. 
 - Figure out how to use pyproject-global dependencies inside WASM notebooks. (The sandboxed env seems to ignore them.)
 - iframes feel pretty bad. Consider using MarimoIslandGenerator and building the HTML ourselves.
+- document basic CSS to fix background color, font, and and width
+- can't run wasm notebooks offline. Consider bundling Python environment.
