@@ -1,7 +1,7 @@
 {
   "name": "astro-marimo",
-  "version": "0.0.8",
-  "description": "Astro integration for Marimo Python notebooks — exports notebooks as static HTML during build",
+  "version": "0.1.0",
+  "description": "Astro integration to build and serve Marimo Python notebooks",
   "type": "module",
   "exports": {
     ".": "./dist/index.js"
