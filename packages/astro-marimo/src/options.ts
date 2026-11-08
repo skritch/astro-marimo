@@ -2,7 +2,7 @@ export interface MarimoIntegrationOptions {
   layout?: string;
   /** Include Python source code in the export. Default: false */
   includeCode: boolean;
-  /** CSS added after Marimo's own styles. */
+  /** CSS added to notebook pages after Marimo's own styles. Unlike layout CSS, it also reaches inside Marimo's widgets, so put `.marimo` theme overrides here. */
   css?: string;
   /** 'static' = pre-rendered HTML; 'wasm' = live Pyodide-powered. Default: 'static' */
   mode: 'static' | 'wasm';

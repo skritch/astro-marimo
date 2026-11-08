@@ -133,7 +133,8 @@ function renderIslands(filePath: string, projectRoot: string, opts: MarimoIntegr
     includeCode: opts.includeCode,
     mode: opts.mode,
   });
-  // A "marimo*" title makes the runtime copy this sheet into widget shadow roots (e.g. static markdown).
+  // We use a "marimo*" title for this style tag so the Marimo runtime will copy it into
+  // widget shadow roots (e.g. static markdown cell outputs, for one.).
   // It must equal the islands <link>'s title: browsers treat a sheet with any other title as an
   // alternate stylesheet and disable it.
   const style = `<style title="marimo-islands">${islandsCss}${opts.css ?? ''}</style>`;

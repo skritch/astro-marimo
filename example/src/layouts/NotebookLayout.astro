@@ -17,15 +17,17 @@ const frontmatter = props.frontmatter || {};
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{frontmatter.title || props.slug}</title>
+    <!--
+      Scoped styles: these only match elements in this template, never the notebook HTML in <slot />.
+      To style notebook content, use <style is:global>; for .marimo theme variables, use the `css` option.
+    -->
     <style>
-      body {
-        display: flex;
-        flex-direction: column;
-      }
+      /* Page background; matched by --background in astro.config.ts so notebook cells blend in. */
+      body { background: #fdf8ee; }
+      /* Page header (layout only; does not affect notebook headings or paragraphs). */
       header {
         padding: 0.75rem 1.5rem;
         border-bottom: 1px solid #e5e7eb;
-        flex-shrink: 0;
         text-align: center;
       }
       h1 {
@@ -37,11 +39,16 @@ const frontmatter = props.frontmatter || {};
         color: #6b7280;
         margin-top: 0.25rem;
       }
-      /* Marimo's run-mode page padding (px-1 sm:px-16 md:px-20 xl:px-24, pb-24 sm:pb-12). */
+      /* Notebook framing: Marimo's run-mode page padding (px-1 sm:px-16 md:px-20 xl:px-24, pb-24 sm:pb-12).
+         Content width comes from the notebook's marimo.App(width=...). */
       main { padding: 0 0.25rem 6rem; }
       @media (min-width: 640px) { main { padding: 0 4rem 3rem; } }
       @media (min-width: 768px) { main { padding-inline: 5rem; } }
       @media (min-width: 1280px) { main { padding-inline: 6rem; } }
+    </style>
+    <!-- Global styles reach notebook content (but not inside widgets with their own shadow root). -->
+    <style is:global>
+      .marimo img { box-shadow: 0 1px 6px rgb(0 0 0 / 0.2); }
     </style>
   </head>
   <body>
