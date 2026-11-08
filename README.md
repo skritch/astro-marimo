@@ -40,17 +40,6 @@ export interface MarimoIntegrationOptions {
   css?: string;
   /** 'static' = pre-rendered HTML; 'wasm' = live Pyodide-powered. Default: 'static' */
   mode: 'static' | 'wasm';
-  /** 'islands' = cells rendered into the page as marimo islands; 'iframe' = full export in an iframe. Default: 'islands' */
-  embed: 'islands' | 'iframe';
-  /** Only used when embed is 'iframe'. */
-  iframe: {
-    /** Hide Marimo watermark. Default: true */
-    stripMarimoWatermark: boolean;
-    /** For wasm mode: 'run' (read-only) or 'edit' (full editor UI). Default: 'run' */
-    wasmMode: 'run' | 'edit';
-    /** Pre-execute notebook cells during export. Requires uv 0.7.21 or greater. Default: true */
-    wasmExecute: boolean;
-  };
 }
 ```
 
@@ -89,7 +78,7 @@ Matrix of features:
 | Bundle python deps | N/A |  | N/A  | |
 | Define astro frontmatter in notebook | ✔️ | ✔️ | | |
 | Per-notebook layout | ✔️ | ✔️ | | |
-| Strip code, watermark, banner | ✔️ | ✔️ | | |
+| Hide code | ✔️ | ✔️ | | |
 | Override Marimo CSS sanely | | | | |
 | Support content collections | | | | |
 
@@ -98,6 +87,5 @@ TODOs:
 - support per-notebook venvs https://docs.marimo.io/guides/editor_features/home/#using-custom-virtual-environments
 - figure out if `pyproject.toml` can be omitted. 
 - Figure out how to use pyproject-global dependencies inside WASM notebooks. (The sandboxed env seems to ignore them.)
-- iframes feel pretty bad. Consider using MarimoIslandGenerator and building the HTML ourselves.
 - document basic CSS to fix background color, font, and and width
 - can't run wasm notebooks offline. Consider bundling Python environment.

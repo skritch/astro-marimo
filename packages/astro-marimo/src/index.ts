@@ -1,9 +1,9 @@
 import type { AstroIntegration } from 'astro';
 import { fileURLToPath } from 'node:url';
 import { marimoVitePlugin } from './vite-plugin.js';
-import { type MarimoIntegrationOptions, type MarimoUserOptions, type IframeOptions, defaults, mergeOptions } from './options.js';
+import { type MarimoIntegrationOptions, type MarimoUserOptions, defaults, mergeOptions } from './options.js';
 
-export type { MarimoIntegrationOptions, MarimoUserOptions, IframeOptions };
+export type { MarimoIntegrationOptions, MarimoUserOptions };
 
 type InternalHookParams = Parameters<
   NonNullable<AstroIntegration["hooks"]["astro:config:setup"]>

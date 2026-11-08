@@ -3,9 +3,8 @@ import jsYaml from 'js-yaml';
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { exportIslands, exportHtml, isMarimoNotebook, stripElements, injectCss } from './mo.js';
+import { exportIslands, isMarimoNotebook } from './mo.js';
 import { type MarimoIntegrationOptions, type MarimoUserOptions, mergeOptions } from './options.js';
-import { outerScript } from './iframe-scripts.js';
 
 type Frontmatter = Record<string, unknown>;
 
@@ -68,9 +67,7 @@ export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptio
       }
 
       const html = exportCache.get(filePath) ?? (() => {
-        const html = mergedOptions.embed === 'islands'
-          ? renderIslands(filePath, projectRoot, mergedOptions, layoutPath, String(frontmatter.title ?? slug))
-          : renderIframe(filePath, projectRoot, mergedOptions, layoutPath, slug);
+        const html = renderIslands(filePath, projectRoot, mergedOptions, layoutPath, String(frontmatter.title ?? slug));
         exportCache.set(filePath, html);
         return html;
       })();
@@ -111,7 +108,7 @@ export default MarimoNotebook;`;
 }
 
 // ---------------------------------------------------------------------------
-// Islands (embed: 'islands')
+// Islands
 // ---------------------------------------------------------------------------
 
 const islandsCss = readFileSync(fileURLToPath(new URL('../styles/islands.css', import.meta.url)), 'utf-8');
@@ -130,28 +127,4 @@ function renderIslands(filePath: string, projectRoot: string, opts: MarimoIntegr
   return layoutPath
     ? `${head}\n${style}\n${body}`
     : `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${title}</title>${head}${style}</head><body>${body}</body></html>`;
-}
-
-// ---------------------------------------------------------------------------
-// Iframe (embed: 'iframe')
-// ---------------------------------------------------------------------------
-
-/** Page HTML for iframe embedding: an auto-resizing iframe for a layout to wrap, or the bare export if there is no layout. */
-function renderIframe(filePath: string, projectRoot: string, opts: MarimoIntegrationOptions, layoutPath: string | undefined, slug: string): string {
-  let html = exportHtml(filePath, projectRoot, {
-    includeCode: opts.includeCode,
-    wasmExecute: opts.iframe.wasmExecute,
-    mode: opts.mode,
-    wasmMode: opts.iframe.wasmMode,
-  });
-  html = stripElements(html, opts.iframe.stripMarimoWatermark);
-  if (opts.css) html = injectCss(html, opts.css);
-  if (!layoutPath) return html;
-
-  const iframeId = `marimo-${slug}`;
-  const srcdoc = html.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-  return [
-    `<iframe id="${iframeId}" srcdoc="${srcdoc}" style="width:100%;border:none;display:block;"></iframe>`,
-    `<script>${outerScript(iframeId)}</script>`,
-  ].join('\n');
 }
