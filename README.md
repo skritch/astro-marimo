@@ -40,6 +40,8 @@ export interface MarimoIntegrationOptions {
   css?: string;
   /** 'static' = pre-rendered HTML; 'wasm' = live Pyodide-powered. Default: 'static' */
   mode: 'static' | 'wasm';
+  /** Fail when a cell raises during export. Errors are logged either way. Default: true for `astro build`, false in dev */
+  strict?: boolean;
 }
 ```
 
@@ -89,3 +91,6 @@ TODOs:
 - Figure out how to use pyproject-global dependencies inside WASM notebooks. (The sandboxed env seems to ignore them.)
 - document basic CSS to fix background color, font, and and width
 - can't run wasm notebooks offline. Consider bundling Python environment.
+- support various marimo configs, like outputs above/below code
+- since we have standalone islands now, make it possible to use islands as components in other astro pages
+  - perhaps support an mdx-maroimo type flow

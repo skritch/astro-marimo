@@ -16,7 +16,7 @@ export function marimoIntegration(opts: MarimoUserOptions = {}): AstroIntegratio
     name: 'astro-marimo',
     hooks: {
       'astro:config:setup': async (params) => {
-        const { config, updateConfig, addRenderer, addPageExtension } = params as InternalHookParams;
+        const { config, command, logger, updateConfig, addRenderer, addPageExtension } = params as InternalHookParams;
 
         const projectRoot = fileURLToPath(config.root);
         addPageExtension('.py');
@@ -29,7 +29,9 @@ export function marimoIntegration(opts: MarimoUserOptions = {}): AstroIntegratio
             plugins: [
               marimoVitePlugin({
                 projectRoot,
-                options: mergeOptions(defaults, opts)
+                options: mergeOptions(defaults, opts),
+                isBuild: command === 'build',
+                logger,
               })
             ]
           }

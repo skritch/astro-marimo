@@ -1,6 +1,6 @@
 import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { delimiter } from 'node:path';
+import { delimiter, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /** Whether a .py file is a marimo notebook (as opposed to any other Python module). */
@@ -31,6 +31,17 @@ export interface IslandsExport {
   head: string;
   /** The rendered <marimo-island> elements. */
   body: string;
+  /** Cells that raised during the build, one entry per root cause. */
+  errors: CellError[];
+}
+
+export interface CellError {
+  /** 1-based cell number in the notebook. */
+  cell: number;
+  /** First line of the cell's code, to help find it. */
+  code: string;
+  /** e.g. "ZeroDivisionError: division by zero" */
+  error: string;
 }
 
 /**
@@ -45,16 +56,22 @@ export interface IslandsExport {
  *   </div>
  */
 export function exportIslands(notebook: string, projectRoot: string, opts: ExportIslandsOptions): IslandsExport {
-  console.log(`Exporting ${notebook} (${opts.mode}, islands)...`)
-
   // The notebook runs natively at build time, so it needs its inline script deps too.
   // uv errors on --with-requirements when the file has no `# /// script` block.
   const withDeps = /^# \/\/\/ script\s*$/m.test(readFileSync(notebook, 'utf-8'))
     ? `--with-requirements "${notebook}" `
     : '';
-  const out = execSync(
-    `uv run ${withDeps}python "${islandsScript}" "${notebook}"${opts.includeCode ? ' --include-code' : ''}${opts.mode === 'static' ? ' --static' : ''}`,
-    { cwd: projectRoot, maxBuffer: 50 * 1024 * 1024, env: cleanEnv() }
-  ).toString('utf-8');
+  let out: string;
+  try {
+    out = execSync(
+      `uv run ${withDeps}python "${islandsScript}" "${notebook}"${opts.includeCode ? ' --include-code' : ''}${opts.mode === 'static' ? ' --static' : ''}`,
+      // Capture stderr rather than inheriting it, so a failure is reported once, in our message.
+      { cwd: projectRoot, maxBuffer: 50 * 1024 * 1024, env: cleanEnv(), stdio: ['ignore', 'pipe', 'pipe'] }
+    ).toString('utf-8');
+  } catch (e) {
+    // The helper prints a short message last; uv's own failures end their stderr with the cause too.
+    const stderr = String((e as { stderr?: Buffer }).stderr ?? '').trim().split('\n').slice(-4).join('\n');
+    throw new Error(`Failed to export ${relative(projectRoot, notebook)}:\n${stderr}`);
+  }
   return JSON.parse(out) as IslandsExport;
 }

@@ -6,6 +6,8 @@ export interface MarimoIntegrationOptions {
   css?: string;
   /** 'static' = pre-rendered HTML; 'wasm' = live Pyodide-powered. Default: 'static' */
   mode: 'static' | 'wasm';
+  /** Fail when a cell raises during export. Errors are logged either way. Default: true for `astro build`, false in dev */
+  strict?: boolean;
 }
 
 /** Options as written by users: everything optional. */

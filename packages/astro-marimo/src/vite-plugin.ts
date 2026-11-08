@@ -1,9 +1,10 @@
 import type { Plugin } from 'vite';
+import type { AstroIntegrationLogger } from 'astro';
 import jsYaml from 'js-yaml';
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { exportIslands, isMarimoNotebook } from './mo.js';
+import { type CellError, exportIslands, isMarimoNotebook } from './mo.js';
 import { type MarimoIntegrationOptions, type MarimoUserOptions, mergeOptions } from './options.js';
 
 type Frontmatter = Record<string, unknown>;
@@ -11,10 +12,13 @@ type Frontmatter = Record<string, unknown>;
 export interface MarimoVitePluginOptions {
   projectRoot: string;
   options: MarimoIntegrationOptions
+  /** Whether this is `astro build`; sets the default for `strict`. */
+  isBuild: boolean;
+  logger: AstroIntegrationLogger;
 }
 
 /** Vite plugin that turns marimo notebook .py files into page components for the astro-marimo renderer. */
-export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptions): Plugin {
+export function marimoVitePlugin({ projectRoot, options, isBuild, logger }: MarimoVitePluginOptions): Plugin {
   const exportCache = new Map<string, string>();
 
   return {
@@ -67,7 +71,17 @@ export function marimoVitePlugin({ projectRoot, options }: MarimoVitePluginOptio
       }
 
       const html = exportCache.get(filePath) ?? (() => {
-        const html = renderIslands(filePath, projectRoot, mergedOptions, layoutPath, String(frontmatter.title ?? slug));
+        const relPath = path.relative(projectRoot, filePath);
+        logger.info(`Exporting ${relPath} (${mergedOptions.mode})`);
+        const { html, errors } = renderIslands(filePath, projectRoot, mergedOptions, layoutPath, String(frontmatter.title ?? slug));
+        if (errors.length) {
+          const report = [
+            `${relPath}: ${errors.length} cell${errors.length > 1 ? 's' : ''} raised during export`,
+            ...errors.map(e => `  cell ${e.cell} (${e.code}): ${e.error}`),
+          ].join('\n');
+          if (mergedOptions.strict ?? isBuild) throw new Error(`${report}\nSet \`strict: false\` to publish the notebook with its errors.`);
+          logger.warn(report);
+        }
         exportCache.set(filePath, html);
         return html;
       })();
@@ -113,9 +127,9 @@ export default MarimoNotebook;`;
 
 const islandsCss = readFileSync(fileURLToPath(new URL('../styles/islands.css', import.meta.url)), 'utf-8');
 
-/** Page HTML for islands: a fragment for a layout to wrap, or a minimal document if there is no layout. */
-function renderIslands(filePath: string, projectRoot: string, opts: MarimoIntegrationOptions, layoutPath: string | undefined, title: string): string {
-  const { head, body } = exportIslands(filePath, projectRoot, {
+/** Page HTML for islands (a fragment for a layout to wrap, or a minimal document if there is no layout), plus any cell errors. */
+function renderIslands(filePath: string, projectRoot: string, opts: MarimoIntegrationOptions, layoutPath: string | undefined, title: string): { html: string; errors: CellError[] } {
+  const { head, body, errors } = exportIslands(filePath, projectRoot, {
     includeCode: opts.includeCode,
     mode: opts.mode,
   });
@@ -124,7 +138,8 @@ function renderIslands(filePath: string, projectRoot: string, opts: MarimoIntegr
   // alternate stylesheet and disable it.
   const style = `<style title="marimo-islands">${islandsCss}${opts.css ?? ''}</style>`;
   // Runtime tags go inline with the islands so layouts need no <head> slot.
-  return layoutPath
+  const html = layoutPath
     ? `${head}\n${style}\n${body}`
     : `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${title}</title>${head}${style}</head><body>${body}</body></html>`;
+  return { html, errors };
 }
