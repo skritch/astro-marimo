@@ -37,6 +37,11 @@ const frontmatter = props.frontmatter || {};
         color: #6b7280;
         margin-top: 0.25rem;
       }
+      /* Marimo's run-mode page padding (px-1 sm:px-16 md:px-20 xl:px-24, pb-24 sm:pb-12). */
+      main { padding: 0 0.25rem 6rem; }
+      @media (min-width: 640px) { main { padding: 0 4rem 3rem; } }
+      @media (min-width: 768px) { main { padding-inline: 5rem; } }
+      @media (min-width: 1280px) { main { padding-inline: 6rem; } }
     </style>
   </head>
   <body>

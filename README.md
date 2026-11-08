@@ -36,16 +36,21 @@ export interface MarimoIntegrationOptions {
   layout?: string;
   /** Include Python source code in the export. Default: false */
   includeCode: boolean;
-  /** Hide Marimo watermark. Default: true */
-  stripMarimoWatermark: boolean;
-  /** CSS injected into the notebook's <head> after Marimo's own styles. */
+  /** CSS added after Marimo's own styles. */
   css?: string;
   /** 'static' = pre-rendered HTML; 'wasm' = live Pyodide-powered. Default: 'static' */
   mode: 'static' | 'wasm';
-  /** For wasm mode: 'run' (read-only) or 'edit' (full editor UI). Default: 'run' */
-  wasmMode: 'run' | 'edit';
-  /** Pre-execute notebook cells during export. Requires uv 0.7.21 or greater. Default: true */
-  wasmExecute: boolean;
+  /** 'islands' = cells rendered into the page as marimo islands; 'iframe' = full export in an iframe. Default: 'islands' */
+  embed: 'islands' | 'iframe';
+  /** Only used when embed is 'iframe'. */
+  iframe: {
+    /** Hide Marimo watermark. Default: true */
+    stripMarimoWatermark: boolean;
+    /** For wasm mode: 'run' (read-only) or 'edit' (full editor UI). Default: 'run' */
+    wasmMode: 'run' | 'edit';
+    /** Pre-execute notebook cells during export. Requires uv 0.7.21 or greater. Default: true */
+    wasmExecute: boolean;
+  };
 }
 ```
 

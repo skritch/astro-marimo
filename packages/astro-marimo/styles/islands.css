@@ -1,0 +1,22 @@
+/*
+ * Restores marimo's run-mode look for islands. Values copied from @marimo-team/frontend.
+ */
+
+/* Cell spacing. The app gives each published cell's output `margin-block: 1rem` inside its own
+   cell box (`.marimo-cell.published .output-area .output`); islands don't produce that markup.
+   Islands with no output stay at zero height, as empty cells do in the app.
+   Reactive islands render `.output`; static and not-yet-hydrated islands render content
+   directly in <marimo-cell-output>, with `<span></span>` meaning no output. */
+marimo-island:has(.output, marimo-cell-output > :not(span:empty)) {
+  display: block;
+  padding-block: 1rem;
+}
+
+/* Markdown headings. The islands stylesheet scopes this rule as
+   `.marimo :is(.markdown,…) .marimo :is(h1,…)`, which never matches. */
+.marimo :is(.markdown, .mo-markdown-renderer) :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--heading-font);
+  font-weight: inherit;
+  margin-block: 1.5rem 1rem;
+  line-height: 1.25;
+}

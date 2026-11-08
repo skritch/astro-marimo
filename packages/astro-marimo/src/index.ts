@@ -1,9 +1,9 @@
 import type { AstroIntegration } from 'astro';
 import { fileURLToPath } from 'node:url';
 import { marimoVitePlugin } from './vite-plugin.js';
-import { type MarimoIntegrationOptions, defaults } from './options.js';
+import { type MarimoIntegrationOptions, type MarimoUserOptions, type IframeOptions, defaults, mergeOptions } from './options.js';
 
-export type { MarimoIntegrationOptions };
+export type { MarimoIntegrationOptions, MarimoUserOptions, IframeOptions };
 
 type InternalHookParams = Parameters<
   NonNullable<AstroIntegration["hooks"]["astro:config:setup"]>
@@ -11,7 +11,7 @@ type InternalHookParams = Parameters<
   addPageExtension(ext: string): void;
 };
 
-export function marimoIntegration(opts: Partial<MarimoIntegrationOptions> = {}): AstroIntegration {
+export function marimoIntegration(opts: MarimoUserOptions = {}): AstroIntegration {
   return {
     name: 'astro-marimo',
     hooks: {
@@ -29,7 +29,7 @@ export function marimoIntegration(opts: Partial<MarimoIntegrationOptions> = {}):
             plugins: [
               marimoVitePlugin({
                 projectRoot,
-                options: { ...defaults, ...opts }
+                options: mergeOptions(defaults, opts)
               })
             ]
           }
